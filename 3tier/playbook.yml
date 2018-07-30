@@ -30,58 +30,16 @@
   gather_facts: false # remove later! speeds up testing
   become: true
 
-  tasks:
-  - name: http
-    package:
-      name: httpie
-      state: latest
-  - name: install HAProxy
-    yum:
-      name=haproxy state=latest
-  - name: enable HAProxy
-    service:
-      name: haproxy
-      state: started
-  - name: configure haproxy
-    template:
-      src: ./haproxy.cfg.j2
-      dest: /etc/haproxy/haproxy.cfg
-  - name: restart HAproxy
-    service:
-      name: haproxy
-      state: restarted
-
+  roles:
+    - haproxy
 
 - name: deploy tomcat
   hosts: apps
   gather_facts: false
   become: true
 
-  tasks:
-  - name: install tomcat
-    package:
-      name: tomcat
-      state: latest
-  - name: enable tomcat at boot
-    service:
-      name: tomcat
-      enabled: yes
-
-  - name: create ansible tomcat directory
-    file:
-      path: /usr/share/tomcat/webapps/ROOT
-      state: directory
-
-  - name: copy static index.html to tomcat webapps/ansible/index.html
-    template:
-      src: index.html.j2
-      dest: /usr/share/tomcat/webapps/ROOT/index.html
-      mode: 0644
-
-  - name: start tomcat
-    service:
-      name: tomcat
-      state: started
+  roles:
+    - tomcat
 
 - name: index.html on app 1
   hosts: app1
@@ -89,6 +47,11 @@
   become: true
 
   tasks:
+  - name: create ansible tomcat directory
+    file:
+      path: /usr/share/tomcat/webapps/ansible
+      state: directory
+
   - name: copy static index.html to tomcat webapps/ansible/index.html
     template:
       src: index.html.app1
@@ -100,52 +63,28 @@
   become: true
 
   tasks:
+  - name: create ansible tomcat directory
+    file:
+      path: /usr/share/tomcat/webapps/ansible
+      state: directory
+
   - name: copy static index.html to tomcat webapps/ansible/index.html
     template:
       src: index.html.app2
       dest: /usr/share/tomcat/webapps/ansible/index.html
 
 - name: deploy postgres
-  hosts: apps
+  hosts: appdbs
   gather_facts: false
   become: true
-  hosts: appdbs
-  tasks:
-  - name: install postgres
-    yum:
-      name: postgresql-server
-      state: latest
-  - name: check if postgres needs init
-    stat:
-      path: /var/lib/pgsql/data
-    register: datapath
-  - name: initialize postgres
-    command: postgresql-setup initdb
-    when: datapath.stat.exists
-  - name: enable postgresql at boot
-    service:
-      name: postgresql
-      enabled: yes
-  - name: start postgres
-    service:
-      name: postgresql.service
-      state: started
+
+  roles:
+    - postgres
 
 - name: deploy apache
   hosts: apps
   gather_facts: false
   become: true
-  hosts: apps
-  tasks:
-  - name: install apache
-    yum:
-      name: httpd
-      state: latest
-  - name: enable apache at boot
-    service:
-      name: httpd
-      enabled: yes
-  - name: start apache
-    service:
-      name: httpd
-      state: started
+
+  roles:
+    - apache

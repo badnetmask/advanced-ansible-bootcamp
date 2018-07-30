@@ -1,0 +1,24 @@
+---
+- name: install postgres
+  package:
+    name: postgresql-server
+    state: latest
+
+- name: check if postgres needs init
+  stat:
+    path: /var/lib/pgsql/data
+  register: datapath
+
+- name: initialize postgres
+  command: postgresql-setup initdb
+  when: datapath.stat.isdir is not defined
+
+- name: enable postgresql at boot
+  service:
+    name: postgresql
+    enabled: yes
+    
+- name: start postgres
+  service:
+    name: postgresql.service
+    state: started
