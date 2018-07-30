@@ -10,6 +10,10 @@
 - name: enable HAProxy
   service:
     name: haproxy
+    enabled: yes
+- name: start HAProxy
+  service:
+    name: haproxy
     state: started
 - name: configure haproxy
   template:
