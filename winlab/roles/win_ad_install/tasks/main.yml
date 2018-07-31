@@ -12,7 +12,6 @@
 
 - name: reboot
   win_reboot:
-    reboot_timeout: 3600
   when: ad_result.reboot_required
 
 - name: display the domain list
