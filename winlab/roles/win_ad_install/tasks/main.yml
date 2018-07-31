@@ -14,5 +14,10 @@
   win_reboot:
   when: ad_result.reboot_required
 
-- name: display the domain list
+- name: gather the domain list
   win_command: nltest /dclist:"{{ ad_domain_name }}"
+  register: dclist
+
+- name: show domain list
+  debug:
+    var: dclist.stdout
