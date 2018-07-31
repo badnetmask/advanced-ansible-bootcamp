@@ -5,13 +5,14 @@
     state: latest
 
 - name: check if postgres needs init
-  stat:
-    path: /var/lib/pgsql/data
-  register: datapath
+  find:
+    paths: /var/lib/pgsql/data
+    file_type: file
+  register: datadir
 
 - name: initialize postgres
   command: postgresql-setup initdb
-  when: datapath.stat.isdir is not defined
+  when: datadir.matched|int == 0
 
 - name: enable postgresql at boot
   service:

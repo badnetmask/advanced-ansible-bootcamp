@@ -33,3 +33,8 @@
   file:
     state: absent
     path: /tmp/index.html
+
+- name: Remove pgsql directory
+  file:
+    state: absent
+    path: /var/lib/pgsql
