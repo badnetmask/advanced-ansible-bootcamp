@@ -1,0 +1,52 @@
+---
+- name: create public network
+  os_network:
+    name: public_network
+    state: present
+    external: true
+
+- name: create public subnet
+  os_subnet:
+    state: present
+    network_name: public_network
+    name: public_subnet
+    cidr: 10.10.10.0/24
+    dns_nameservers:
+      - 8.8.8.7
+      - 8.8.8.8
+    host_routes:
+      - destination: 0.0.0.0/0
+        nexthop: 10.10.10.0
+      - destination: 192.168.0.0/24
+        nexthop: 192.168.0.0
+
+- name: create private network
+  os_network:
+    name: private_network
+    state: present
+    external: false
+
+- name: create private subnet
+  os_subnet:
+    state: present
+    network_name: private_network
+    name: private_subnet
+    cidr: 20.20.20.0/24
+    dns_nameservers:
+      - 8.8.8.7
+      - 8.8.8.8
+    host_routes:
+      - destination: 0.0.0.0/0
+        nexthop: 20.20.20.0
+      - destination: 192.168.0.0/24
+        nexthop: 192.168.0.0
+
+- name: create router
+  os_router:
+    state: present
+    name: main_router
+    network: public_network
+    external_fixed_ips:
+      - subnet: public_subnet
+    interfaces:
+      - private_subnet
