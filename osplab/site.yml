@@ -2,6 +2,8 @@
 - hosts: jumpbox
   gather_facts: true
   roles:
-    - osp_network
-    - osp_keypairs
-    - osp_custom_flavor
+    - role: osp_network
+    - role: osp_keypairs
+    - role: osp_custom_flavor
+    - role: secgroups
+      tags: secgroups
