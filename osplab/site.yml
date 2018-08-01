@@ -2,4 +2,6 @@
 - hosts: jumpbox
   gather_facts: true
   roles:
+    - osp_network
     - osp_keypairs
+    - osp_custom_flavor
