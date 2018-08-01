@@ -13,6 +13,7 @@
     surname: '{{ item.surname }}'
     password: '{{ item.password }}'
     state: present
+    update_password: on_create
     groups:
       - '{{ item.group_name }}'
   with_items: '{{ user_info }}'
