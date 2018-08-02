@@ -1,0 +1,25 @@
+---
+- name: install postgres
+  package:
+    name: postgresql-server
+    state: latest
+
+- name: check if postgres needs init
+  find:
+    paths: /var/lib/pgsql/data
+    file_type: file
+  register: datadir
+
+- name: initialize postgres
+  command: postgresql-setup initdb
+  when: datadir.matched|int == 0
+
+- name: enable postgresql at boot
+  service:
+    name: postgresql
+    enabled: yes
+    
+- name: start postgres
+  service:
+    name: postgresql.service
+    state: started

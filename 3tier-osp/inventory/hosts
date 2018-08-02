@@ -1,0 +1,24 @@
+[all:vars]
+GUID=c41a
+
+[internal:vars]
+###########################################################################
+### Ansible Vars
+###########################################################################
+timeout=60
+ansible_become=yes
+ansible_ssh_user=ec2-user
+
+[internal:children]
+frontends
+apps
+appdbs
+
+[frontends:children]
+tag_AnsibleGroup_frontends
+
+[apps:children]
+tag_AnsibleGroup_apps
+
+[appdbs:children]
+tag_AnsibleGroup_appdbs
